@@ -10,7 +10,7 @@ class AppBarHome extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(right: 6.0),
+                padding: const EdgeInsets.fromLTRB(0, 12, 6, 0),
                 child: IconButton(
                   icon: Icon(Icons.menu),
                   onPressed: () {},
@@ -22,7 +22,7 @@ class AppBarHome extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(left: 4.0),
+                padding: const EdgeInsets.only(left: 8.0),
                 child: Text(
                   'Pokedex',
                   style: TextStyle(
