@@ -40,6 +40,8 @@ abstract class _PokeApiStoreBase with Store {
   @action
   Widget getImage({String numero}) {
     return CachedNetworkImage(
+      height: 100,
+      width: 100,
       placeholder: (context, url) => new Container(
         color: Colors.transparent,
       ),
@@ -47,4 +49,5 @@ abstract class _PokeApiStoreBase with Store {
           'https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/images/$numero.png',
     );
   }
+
 }
