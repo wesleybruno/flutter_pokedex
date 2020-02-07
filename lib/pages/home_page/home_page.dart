@@ -6,25 +6,18 @@ import 'package:pokemon/models/PokeApi.dart';
 import 'package:pokemon/pages/home_page/widgets/app_bar_home.dart';
 import 'package:pokemon/pages/home_page/widgets/poke_item.dart';
 import 'package:pokemon/stores/pokeapi_store.dart';
+import 'package:pokemon/pages/poke_detail/poke_detail_page.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  PokeApiStore pokeApiStore;
-  @override
-  void initState() {
-    super.initState();
-    pokeApiStore = PokeApiStore();
-    pokeApiStore.fetchPokemonList();
-  }
-
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screeWidth = MediaQuery.of(context).size.width;
     double statusHeight = MediaQuery.of(context).padding.top;
+     final _pokemonStore = Provider.of<PokeApiStore>(context);
+     if(_pokemonStore.pokeApi == null){
+       _pokemonStore.fetchPokemonList();
+     }
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -51,7 +44,7 @@ class _HomePageState extends State<HomePage> {
                 Expanded(
                   child: Container(
                     child: Observer(builder: (BuildContext builder) {
-                      PokeApi _pokeAPi = pokeApiStore.pokeApi;
+                      PokeApi _pokeAPi = _pokemonStore.pokeApi;
                       return (_pokeAPi != null)
                           ? AnimationLimiter(
                               child: GridView.builder(
@@ -61,11 +54,11 @@ class _HomePageState extends State<HomePage> {
                                 gridDelegate:
                                     new SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 2),
-                                itemCount: pokeApiStore.pokeApi.pokemon.length,
+                                itemCount: _pokemonStore.pokeApi.pokemon.length,
                                 itemBuilder: (context, index) {
                                   Pokemon pokemon =
-                                      pokeApiStore.getPokemon(index: index);
-                                  //pokeApiStore.pokeApi.pokemon[index];
+                                      _pokemonStore.getPokemon(index: index);
+                                  //_pokemonStore.pokeApi.pokemon[index];
                                   return AnimationConfiguration.staggeredGrid(
                                     position: index,
                                     duration: const Duration(milliseconds: 375),
@@ -76,19 +69,22 @@ class _HomePageState extends State<HomePage> {
                                           types: pokemon.type,
                                           index: index,
                                           nome: pokemon.name,
-                                          image: pokeApiStore.getImage(numero: pokemon.numero),
-                                          color: ConstApp.getColorType(type: pokemon.type[0]),
+                                          image: _pokemonStore.getImage(
+                                              numero: pokemon.numero),
+                                          color: ConstApp.getColorType(
+                                              type: pokemon.type[0]),
                                           //num: pokemon.num,
                                         ),
                                         onTap: () {
-                                          // Navigator.push(
-                                          //     context,
-                                          //     MaterialPageRoute(
-                                          //       builder: (BuildContext
-                                          //               context) =>
-                                          //           Container() /*PokeDetailPage(index: index)*/,
-                                          //       fullscreenDialog: true,
-                                          //     ));
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        PokeDetailPage(
+                                                            index: index),
+                                                fullscreenDialog: true,
+                                              ));
                                         },
                                       ),
                                     ),

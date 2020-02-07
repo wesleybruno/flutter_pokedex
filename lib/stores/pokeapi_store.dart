@@ -13,6 +13,9 @@ abstract class _PokeApiStoreBase with Store {
   @observable
   PokeApi pokeApi;
 
+  @observable
+  Pokemon pokemonAtual;
+
   @action
   fetchPokemonList() {
     pokeApi = null;
@@ -22,6 +25,16 @@ abstract class _PokeApiStoreBase with Store {
   @action
   getPokemon({int index}) {
     return pokeApi.pokemon[index];
+  }
+
+  @action
+  setPokemonAtual({Pokemon pokemon}) {
+    pokemonAtual = pokemon;
+  }
+
+  @action
+  getPokemonAtual() {
+    return pokemonAtual;
   }
 
   Future<PokeApi> loadPokeApi() async {
@@ -40,8 +53,8 @@ abstract class _PokeApiStoreBase with Store {
   @action
   Widget getImage({String numero}) {
     return CachedNetworkImage(
-      height: 100,
-      width: 100,
+      height: 80,
+      width: 80,
       placeholder: (context, url) => new Container(
         color: Colors.transparent,
       ),
@@ -49,5 +62,4 @@ abstract class _PokeApiStoreBase with Store {
           'https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/images/$numero.png',
     );
   }
-
 }
