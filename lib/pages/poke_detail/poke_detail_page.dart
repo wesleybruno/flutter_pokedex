@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:pokemon/consts/const_app.dart';
 import 'package:pokemon/models/PokeApi.dart';
 import 'package:pokemon/stores/pokeapi_store.dart';
@@ -14,38 +15,47 @@ class PokeDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _pokemonStore = Provider.of<PokeApiStore>(context);
-    PageController _controller =
-        PageController(initialPage: index, keepPage: false);
-    Pokemon pokemon = _pokemonStore.getPokemon(index: index);
-    _pokemonStore.setPokemonAtual(pokemon: pokemon);
-    _color = ConstApp.getColorType(type: pokemon.type[0]);
+    Pokemon _pokemonAtual = _pokemonStore.getPokemonAtual;
+    _color = ConstApp.getColorType(type: _pokemonAtual.type[0]);
+    PageController _controller = PageController(initialPage: index, keepPage: false);
     return Scaffold(
-      backgroundColor: _color,
-      appBar: AppBar(
-        title: Opacity(
-          child: Text(
-            _pokemonStore.getPokemonAtual(),
-            style: TextStyle(
-              fontFamily: 'Google',
-              fontWeight: FontWeight.bold,
-              fontSize: 21,
-            ),
-          ),
-          opacity: 0.5,
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight(50),
+          child: Observer(builder: (BuildContext context) {
+            _color = ConstApp.getColorType(type: _pokemonStore.pokemonAtual.type[0]);
+            return AppBar(
+              title: Opacity(
+                child: Text(
+                  _pokemonStore.pokemonAtual.name,
+                  style: TextStyle(
+                    fontFamily: 'Google',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 21,
+                  ),
+                ),
+                opacity: 0.5,
+              ),
+              elevation: 0,
+              backgroundColor: _color,
+              leading: IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+              actions: <Widget>[
+                IconButton(icon: Icon(Icons.favorite_border), onPressed: null)
+              ],
+            );
+          },
         ),
-        elevation: 0,
-        backgroundColor: _color,
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            }),
-        actions: <Widget>[
-          IconButton(icon: Icon(Icons.favorite_border), onPressed: null)
-        ],
       ),
       body: Stack(
         children: <Widget>[
+          Observer(builder: (_) {
+            _color =
+                ConstApp.getColorType(type: _pokemonStore.pokemonAtual.type[0]);
+            return Container(color: _color);
+          }),
           Container(
             height: MediaQuery.of(context).size.height / 3,
           ),
@@ -64,28 +74,23 @@ class PokeDetailPage extends StatelessWidget {
               );
             },
           ),
-          Positioned(
-            top: 50,
+          Padding(
+            padding: const EdgeInsets.only(top: 100),
             child: SizedBox(
-              height: 120,
+              height: 150,
               child: PageView.builder(
                 controller: _controller,
                 itemCount: _pokemonStore.pokeApi.pokemon.length,
                 itemBuilder: (BuildContext context, int count) {
-                  Pokemon _poke = _pokemonStore.getPokemonAtual();
-                  _color = ConstApp.getColorType(type: _poke.type[0]);
-                  return _pokemonStore.getImage(numero: _poke.numero);
+                  Pokemon _pokeitem = _pokemonStore.getPokemon(index: count);
+                  return _pokemonStore.getImage(numero: _pokeitem.numero);
                 },
-                onPageChanged: (value) {
-                  Pokemon _poke = _pokemonStore.getPokemon(index: value);
-                  print(_poke.name);
-                  print(_poke.numero);
-                  _pokemonStore.setPokemonAtual(pokemon: _poke);
-                  return _pokemonStore.getImage(numero: _poke.numero);
+                onPageChanged: (index) {
+                  _pokemonStore.setPokemonAtual(index: index);
                 },
               ),
             ),
-          )
+          ),
         ],
       ),
     );
