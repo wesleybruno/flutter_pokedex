@@ -80,7 +80,8 @@ class PokeItem extends StatelessWidget {
                 ],
               ),
               Positioned(
-                top: 0, right: 0,
+                top: 0,
+                right: 0,
                 child: Opacity(
                   child: Image.asset(
                     ConstApp.whitePokeball,
@@ -90,7 +91,10 @@ class PokeItem extends StatelessWidget {
                   opacity: 0.2,
                 ),
               ),
-              Positioned(bottom: 0, right: 0, child: image),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: image),
             ],
           ),
         ),
